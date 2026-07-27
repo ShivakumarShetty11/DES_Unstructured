@@ -9,9 +9,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY app/ ./app/
 
-# Pre-download ChromaDB embedding model so first push doesn't timeout
-RUN python -c "from chromadb.utils.embedding_functions import DefaultEmbeddingFunction; DefaultEmbeddingFunction()(['warmup'])"
-
 # Create runtime directories
 RUN mkdir -p data/chroma uploads
 
