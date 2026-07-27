@@ -1,10 +1,5 @@
 FROM python:3.11-slim
 
-# System deps for pymupdf
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libmupdf-dev \
-    && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
 # Install Python dependencies first (better layer caching)
@@ -14,7 +9,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY app/ ./app/
 
-# Create runtime directories (data & uploads will be empty; use a volume or GCS for persistence)
+# Pre-download ChromaDB embedding model so first push doesn't timeout
+RUN python -c "from chromadb.utils.embedding_functions import DefaultEmbeddingFunction; DefaultEmbeddingFunction()([])"
+
+# Create runtime directories
 RUN mkdir -p data/chroma uploads
 
 # Cloud Run sets PORT env var; default to 8080

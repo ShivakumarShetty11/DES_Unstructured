@@ -41,8 +41,11 @@ async function onExtract(event) {
 
   try {
     const response = await fetch("/api/datasets/extract", { method: "POST", body: formData });
+    if (!response.ok) {
+      const text = await response.text().catch(() => `HTTP ${response.status}`);
+      throw new Error(text.startsWith("{") ? JSON.parse(text).detail : `Server error ${response.status}`);
+    }
     const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || "Extraction failed");
 
     _extracted = data;
     showPreview(data);
@@ -104,8 +107,11 @@ async function pushToCatalogue() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(_extracted),
     });
+    if (!response.ok) {
+      const text = await response.text().catch(() => `HTTP ${response.status}`);
+      throw new Error(text.startsWith("{") ? JSON.parse(text).detail : `Server error ${response.status}`);
+    }
     const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || "Push failed");
 
     const d = data.dataset;
     pushStatus.innerHTML = `

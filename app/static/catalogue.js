@@ -31,13 +31,15 @@ async function loadDatasets() {
 
   try {
     const response = await fetch(`/api/datasets?${params.toString()}`);
-    const data = await response.json();
 
     if (!response.ok) {
-      datasetCount.textContent = data.detail || "Failed to load datasets";
+      const text = await response.text().catch(() => `HTTP ${response.status}`);
+      datasetCount.textContent = `Server error (${response.status}) — try again in a moment`;
       datasetGrid.innerHTML = "";
       return;
     }
+
+    const data = await response.json();
 
     renderFilters(data.filters || {});
     renderDatasets(data.datasets || []);
