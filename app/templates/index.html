@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-brand">
+        <div class="brand-icon">DT</div>
+        <h1>Dhara Toolkit</h1>
+      </div>
+      <div class="topbar-actions">
+        <a class="btn btn-primary" href="/catalogue" target="_blank" rel="noopener">Open Catalogue ↗</a>
+      </div>
+    </header>
+
+    <main class="layout">
+
+      <!-- ── Step 1: Extract form ───────────────────────────────────────── -->
+      <div class="card" id="step1">
+        <p class="card-title">Ingest PDF Document</p>
+        <p class="card-subtitle">Fill in the metadata and upload a PDF (or paste a URL). Click <strong>Extract PDF</strong> to preview the extraction before saving.</p>
+
+        <form id="ingestForm" class="form-grid">
+          <div class="form-field">
+            <label for="f-title">Title</label>
+            <input id="f-title" name="title" placeholder="Implementation of U.P. Data Centre Policy, 2021" required />
+          </div>
+          <div class="form-field">
+            <label for="f-category">Category</label>
+            <input id="f-category" name="category" placeholder="IT &amp; Technology" required />
+          </div>
+          <div class="form-field">
+            <label for="f-sub_category">Sub Category</label>
+            <input id="f-sub_category" name="sub_category" placeholder="Data Centers" required />
+          </div>
+          <div class="form-field">
+            <label for="f-document_type">Document Type</label>
+            <input id="f-document_type" name="document_type" placeholder="Circular" required />
+          </div>
+          <div class="form-field">
+            <label for="f-issuing_department">Issuing Department</label>
+            <input id="f-issuing_department" name="issuing_department" placeholder="Industrial Development Department" />
+          </div>
+          <div class="form-field">
+            <label for="f-policy_year">Policy Year</label>
+            <input id="f-policy_year" name="policy_year" placeholder="2021" />
+          </div>
+          <div class="form-field">
+            <label for="f-source_language">Source Language</label>
+            <input id="f-source_language" name="source_language" placeholder="Hindi" />
+          </div>
+          <div class="form-field">
+            <label for="f-document_url">Document URL</label>
+            <input id="f-document_url" name="document_url" type="url" placeholder="https://example.com/document.pdf" />
+          </div>
+          <div class="form-field wide">
+            <label for="f-tags">Tags <span class="muted">(JSON array)</span></label>
+            <textarea id="f-tags" name="tags" rows="2">["policy", "data center"]</textarea>
+          </div>
+          <div class="form-field wide">
+            <label for="f-file">PDF File <span class="muted">(upload or use URL above)</span></label>
+            <input id="f-file" name="file" type="file" accept="application/pdf,.pdf" />
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="extractBtn">Extract PDF</button>
+          </div>
+        </form>
+
+        <div id="extractStatus" class="result-box" style="display:none"></div>
+      </div>
+
+      <!-- ── Step 2: Preview + Push ─────────────────────────────────────── -->
+      <div class="card" id="step2" style="display:none">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+          <div style="flex:1">
+            <p class="card-title" id="previewTitle"></p>
+            <p class="card-subtitle" style="margin:0">Review the extraction below. Push to Catalogue when satisfied.</p>
+          </div>
+          <button class="btn btn-sm" onclick="goBack()">← Re-extract</button>
+        </div>
+
+        <!-- stats row -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px" id="previewStats"></div>
+
+        <!-- AI summary -->
+        <p class="panel-label">AI Summary</p>
+        <p id="previewSummary" style="font-size:0.9rem;line-height:1.65;margin:0 0 18px;color:var(--ink)"></p>
+
+        <!-- extracted text preview -->
+        <p class="panel-label">Extracted Text Preview <span class="muted" style="font-size:0.74rem;font-weight:400">(first 1 500 chars)</span></p>
+        <pre id="previewText" style="font-size:0.8rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px;max-height:260px;overflow-y:auto;margin:0 0 18px"></pre>
+
+        <!-- push actions -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line)">
+          <button class="btn btn-primary" id="pushBtn" onclick="pushToCatalogue()">Push to Catalogue</button>
+          <button class="btn btn-sm" onclick="goBack()">← Re-extract</button>
+        </div>
+
+        <div id="pushStatus" class="result-box" style="display:none;margin-top:14px"></div>
+      </div>
+
+    </main>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

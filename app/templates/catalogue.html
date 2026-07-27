@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-brand">
+        <div class="brand-icon">DT</div>
+        <h1>Dhara Toolkit</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn" onclick="showMcpModal()">MCP Endpoint</button>
+        <a class="btn" href="/" rel="noopener">← Ingestion</a>
+      </div>
+    </header>
+
+    <!-- MCP Modal -->
+    <div class="modal-overlay hidden" id="mcpModal" onclick="hideMcpModal(event)">
+      <div class="modal-box" style="max-width:660px;max-height:90vh;overflow-y:auto">
+        <div class="modal-head">
+          <h2 class="modal-title">MCP Server Integration</h2>
+          <button class="modal-close" onclick="hideMcpModal()">&times;</button>
+        </div>
+
+        <!-- Server URL -->
+        <p class="panel-label" style="margin-top:0">Server URL</p>
+        <div class="code-block" id="mcpUrlBlock">
+          <span id="mcpUrlText">http://127.0.0.1:8000/mcp</span>
+          <button class="copy-btn" onclick="copyMcpUrl()">Copy</button>
+        </div>
+
+        <!-- Connect via Claude Code CLI -->
+        <p class="panel-label">Connect via Claude Code CLI</p>
+        <p class="muted" style="margin-bottom:8px;font-size:0.83rem">Run this once in your terminal — Claude Code will register the server and expose all tools in every session:</p>
+        <div class="code-block" id="cliBlock">
+          <span id="cliText">claude mcp add --transport http des-catalog http://127.0.0.1:8000/mcp</span>
+          <button class="copy-btn" onclick="copyBlock('cliText', this)">Copy</button>
+        </div>
+
+        <!-- Via settings.json -->
+        <p class="panel-label">Or add to <code style="font-size:0.82rem;background:#f1f4f7;padding:1px 5px;border-radius:4px">.claude/settings.json</code></p>
+        <p class="muted" style="margin-bottom:8px;font-size:0.83rem">Useful for project-level or team configs — paste into your project's <code style="font-size:0.82rem">.claude/settings.json</code>:</p>
+        <div class="code-block" id="settingsBlock" style="white-space:pre">
+<span id="settingsText">{
+  "mcpServers": {
+    "des-catalog": {
+      "type": "http",
+      "url": "http://127.0.0.1:8000/mcp"
+    }
+  }
+}</span>
+          <button class="copy-btn" onclick="copyBlock('settingsText', this)">Copy</button>
+        </div>
+
+        <!-- Available tools -->
+        <p class="panel-label">Available MCP Tools</p>
+        <div class="endpoint-list">
+          <div class="endpoint-item">
+            <span class="method-badge method-mcp">tool</span>
+            <span class="endpoint-url">list_datasets — all documents, metadata only</span>
+          </div>
+          <div class="endpoint-item">
+            <span class="method-badge method-mcp">tool</span>
+            <span class="endpoint-url">get_dataset(dataset_id) — full record incl. extracted_text</span>
+          </div>
+          <div class="endpoint-item">
+            <span class="method-badge method-mcp">tool</span>
+            <span class="endpoint-url">get_dataset_text(dataset_id) — extracted text only</span>
+          </div>
+          <div class="endpoint-item">
+            <span class="method-badge method-mcp">tool</span>
+            <span class="endpoint-url">search_datasets(query) — keyword search, metadata only</span>
+          </div>
+          <div class="endpoint-item">
+            <span class="method-badge method-mcp">tool</span>
+            <span class="endpoint-url">semantic_search_datasets(query) — vector similarity search</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout-split">
+      <!-- Query Panel (left) -->
+      <aside>
+        <div class="card card-sticky">
+          <p class="card-title">Query Panel</p>
+
+          <div class="search-bar">
+            <input id="queryInput" placeholder="Search title, summary, tags…" />
+            <button class="btn btn-primary" onclick="loadDatasets()" title="Search" style="padding:9px 13px">&#x2315;</button>
+          </div>
+
+          <p class="filter-label">Category <span class="muted" style="font-size:0.7rem;font-weight:400">(priority)</span></p>
+          <div class="filter-stack">
+            <select id="categorySelect">
+              <option value="">All Categories</option>
+            </select>
+            <select id="subCategorySelect">
+              <option value="">All Sub Categories</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary btn-full" onclick="loadDatasets()">Apply Filters</button>
+        </div>
+      </aside>
+
+      <!-- Dataset Stream (right) -->
+      <main>
+        <div class="stream-header">
+          <span class="stream-count" id="datasetCount">Loading…</span>
+        </div>
+        <div class="dataset-stream" id="datasetGrid"></div>
+      </main>
+    </div>
+
+    <script src="/static/catalogue.js" defer></script>
+  </body>
+</html>
