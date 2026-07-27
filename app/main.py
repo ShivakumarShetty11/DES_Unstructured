@@ -40,12 +40,12 @@ async def startup() -> None:
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "title": settings.app_name})
+    return templates.TemplateResponse(request, "index.html", {"title": settings.app_name})
 
 
 @app.get("/catalogue", response_class=HTMLResponse)
 async def catalogue(request: Request):
-    return templates.TemplateResponse("catalogue.html", {"request": request, "title": "Unstructured PDF Catalogue"})
+    return templates.TemplateResponse(request, "catalogue.html", {"title": "Unstructured PDF Catalogue"})
 
 
 app.include_router(api_router)
