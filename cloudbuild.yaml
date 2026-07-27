@@ -5,13 +5,13 @@ steps:
       - build
       - '--no-cache'
       - '-t'
-      - '$_AR_HOSTNAME/$PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:$COMMIT_SHA'
+      - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:$COMMIT_SHA'
       - '.'
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
-      - '$_AR_HOSTNAME/$PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:$COMMIT_SHA'
+      - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:$COMMIT_SHA'
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
@@ -19,10 +19,10 @@ steps:
       - run
       - deploy
       - '$_SERVICE_NAME'
-      - '--image=$_AR_HOSTNAME/$PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:$COMMIT_SHA'
+      - '--image=$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:$COMMIT_SHA'
       - '--region=$_DEPLOY_REGION'
       - '--platform=managed'
       - '--quiet'
 
 images:
-  - '$_AR_HOSTNAME/$PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:$COMMIT_SHA'
+  - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:$COMMIT_SHA'
