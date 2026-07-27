@@ -49,4 +49,8 @@ async def catalogue(request: Request):
 
 
 app.include_router(api_router)
-app.mount("/mcp", mcp.streamable_http_app())
+
+# Mount FastMCP routes directly so FastAPI doesn't strip the /mcp prefix
+_mcp_starlette = mcp.streamable_http_app()
+for _route in _mcp_starlette.routes:
+    app.router.routes.append(_route)
