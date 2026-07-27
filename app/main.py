@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.api import router as api_router
 from app.config import settings
-from app.mcp_server import init_stores, mcp
+from app.mcp_router import router as mcp_router
 from app.services.document_store import DocumentStore
 from app.services.pdf_service import PdfService
 from app.services.summary_service import SummaryService
@@ -35,7 +35,6 @@ async def startup() -> None:
         persist_directory=str(settings.chroma_path),
         collection_name=settings.chroma_collection,
     )
-    init_stores(app.state.document_store, app.state.vector_store)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -49,8 +48,4 @@ async def catalogue(request: Request):
 
 
 app.include_router(api_router)
-
-# Mount FastMCP routes directly so FastAPI doesn't strip the /mcp prefix
-_mcp_starlette = mcp.streamable_http_app()
-for _route in _mcp_starlette.routes:
-    app.router.routes.append(_route)
+app.include_router(mcp_router)

@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import APIRouter, Request
 
-router = APIRouter(prefix="/mcp", tags=["mcp"])
+router = APIRouter(tags=["mcp"])
 
 
 def _ok(request_id: Any, result: Any) -> dict[str, Any]:
@@ -125,7 +125,7 @@ _TOOLS = [
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 
-@router.get("/")
+@router.get("/mcp")
 async def mcp_info() -> dict[str, Any]:
     return {
         "name": "Dhara Toolkit — Unstructured Data MCP",
@@ -144,7 +144,7 @@ async def mcp_info() -> dict[str, Any]:
     }
 
 
-@router.post("/")
+@router.post("/mcp")
 async def mcp_handler(request: Request) -> dict[str, Any]:
     payload = await request.json()
     method = payload.get("method")
